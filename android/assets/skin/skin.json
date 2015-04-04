@@ -1,0 +1,75 @@
+{
+    com.badlogic.gdx.graphics.Color: {
+        white: { r: 1, g: 1, b: 1, a: 1 }
+        black: { r: 0, g: 0, b: 0, a: 1 }
+        red: { r: 1, g: 0, b: 0, a: 1 }
+        grey: { r: 0.5, g: 0.5, b: 0.5, a: 1 }
+        yellow: { r: 0.5, g: 0.5, b: 0, a: 1 }
+        black_text: { hex: "000000" }
+        green_text: { hex: "4e7113" }
+        red_text: { hex: "cc0315" }
+        purple_text: { hex: "aa76c0" }
+        chip_black_text: { hex: "000000" }
+        chip_green_text: { hex: "4e7113" }
+        chip_red_text: { hex: "cc0315" }
+        chip_purple_text: { hex: "aa76c0" }
+        green_super_dark: { hex: "0c3109" }
+        yellow_super_dark: { hex: "382104" }
+    }
+    com.badlogic.gdx.graphics.g2d.BitmapFont: {
+        BerlinSansFB : { file: font/BerlinSansFB.fnt }
+        Golden : { file: font/Golden.fnt }
+        Basic : { file: font/Basic.fnt }
+        Laconic : { file: font/Laconic.fnt }
+        Trebucket : { file: font/TrebucketMs.fnt }
+    }
+    com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
+        green: {
+            down: control/button_green, up: control/button_green,
+            font: BerlinSansFB, fontColor: green_super_dark
+        }
+        yellow: {
+            down: control/button_yellow_down, up: control/button_yellow_normal,
+            font: BerlinSansFB, fontColor: yellow_super_dark
+        }
+        insurance_button: {
+            down: control/button_yellow_down, up: control/button_yellow_normal,
+            font: Basic, fontColor: yellow_super_dark
+        }
+        split_button: {
+            down: control/button_yellow_down, up: control/button_yellow_normal,
+            font: Basic, fontColor: yellow_super_dark
+        }
+        golden_ring : {
+            down: control/button_gold_ring_pressed, up: control/button_gold_ring, disabled: control/button_gold_ring_disabled,
+            font: BerlinSansFB
+        }
+        golden_ring_small : {
+            down: control/button_gold_ring_pressed_small, up: control/button_gold_ring_small,
+            font: Golden
+        }
+        golden_ring_blue_small : {
+            down: control/button_gold_ring_blue_small, up: control/button_gold_ring_blue_small,
+            font: Golden
+        }
+        golden_ring_black_small : {
+            down: control/button_gold_ring_black_small, up: control/button_gold_ring_black_small,
+            font: Golden
+        }
+        golden_ring_green_small : {
+            down: control/button_gold_ring_green_small, up: control/button_gold_ring_green_small,
+            font: Golden
+        }
+        golden_ring_red_small : {
+            down: control/button_gold_ring_red_small, up: control/button_gold_ring_red_small,
+            font: Golden
+        }
+    }
+    com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
+        default-white: { font: Basic, fontColor: white }
+        exp_bar: { font: Basic, fontColor: yellow_super_dark }
+        value_bar: { font: Basic, fontColor: yellow_super_dark }
+        dialog_label: { font: Golden }
+        alert_dialog_content: { font: Trebucket, background: control/dialog_dark_bg }
+    }
+}

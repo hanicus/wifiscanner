@@ -1,4 +1,4 @@
-package com.longlong.wifiscanner.wifi;
+package com.longlong.wifiscanner.model;
 
 public class ScanResult {
 

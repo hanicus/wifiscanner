@@ -7,6 +7,6 @@ import com.longlong.wifiscanner.AppMain;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		new LwjglApplication(new AppMain(), config);
+		new LwjglApplication(new AppMain(new WifiScanner()), config);
 	}
 }

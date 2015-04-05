@@ -1,19 +1,14 @@
 package com.longlong.wifiscanner;
 
-import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.longlong.wifiscanner.model.ScanResult;
+import com.longlong.wifiscanner.screen.MainScreen;
 import com.longlong.wifiscanner.util.Assets;
-import com.longlong.wifiscanner.wifi.ScanResult;
-import com.longlong.wifiscanner.wifi.WifiScannerAdapter;
 
-public class AppMain extends ApplicationAdapter {
+public class AppMain extends Game {
     private Assets assets;
     private final WifiScannerAdapter wifiScannerAdapter;
-    SpriteBatch batch;
-    Texture img;
 
     public AppMain() {
         this(null);
@@ -25,20 +20,13 @@ public class AppMain extends ApplicationAdapter {
 
     @Override
     public void create() {
-        assets = new Assets();
-        batch = new SpriteBatch();
-        Gdx.app.log("WifiScanner", "Start Scanning WIFI!!!!!!!!!!!!!!!");
-        for (ScanResult scanResult : wifiScannerAdapter.getScanResults()) {
-            Gdx.app.log("WifiScanner", scanResult.toString());
+        assets = new Assets(wifiScannerAdapter);
+        if (wifiScannerAdapter != null) {
+            Gdx.app.log("AppMain", "Start Scanning WIFI!");
+            for (ScanResult scanResult : wifiScannerAdapter.getScanResults()) {
+                Gdx.app.log("AppMain", scanResult.toString());
+            }
         }
-    }
-
-    @Override
-    public void render() {
-        Gdx.gl.glClearColor(1, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        batch.begin();
-        batch.draw(img, 0, 0);
-        batch.end();
+        setScreen(new MainScreen(assets));
     }
 }

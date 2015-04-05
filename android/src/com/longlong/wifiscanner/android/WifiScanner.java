@@ -5,8 +5,8 @@ import java.util.List;
 
 import android.net.wifi.WifiManager;
 
-import com.longlong.wifiscanner.wifi.ScanResult;
-import com.longlong.wifiscanner.wifi.WifiScannerAdapter;
+import com.longlong.wifiscanner.WifiScannerAdapter;
+import com.longlong.wifiscanner.model.ScanResult;
 
 public class WifiScanner implements WifiScannerAdapter {
 

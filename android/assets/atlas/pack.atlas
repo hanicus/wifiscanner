@@ -1,91 +1,33 @@
 
 pack.png
-size: 1024,512
+size: 512,128
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
 black_bg
   rotate: false
-  xy: 683, 167
+  xy: 2, 26
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-control/button_gold_ring
-  rotate: false
-  xy: 683, 381
-  size: 110, 110
-  orig: 110, 110
-  offset: 0, 0
-  index: -1
-control/button_gold_ring_black_small
-  rotate: false
-  xy: 907, 404
-  size: 87, 87
-  orig: 87, 87
-  offset: 0, 0
-  index: -1
-control/button_gold_ring_blue_small
-  rotate: false
-  xy: 683, 78
-  size: 87, 87
-  orig: 87, 87
-  offset: 0, 0
-  index: -1
-control/button_gold_ring_disabled
-  rotate: false
-  xy: 683, 269
-  size: 110, 110
-  orig: 110, 110
-  offset: 0, 0
-  index: -1
-control/button_gold_ring_green_small
-  rotate: false
-  xy: 882, 292
-  size: 87, 87
-  orig: 87, 87
-  offset: 0, 0
-  index: -1
-control/button_gold_ring_pressed
-  rotate: false
-  xy: 795, 381
-  size: 110, 110
-  orig: 110, 110
-  offset: 0, 0
-  index: -1
 control/button_gold_ring_pressed_small
   rotate: false
-  xy: 772, 89
+  xy: 104, 2
   size: 76, 76
   orig: 76, 76
-  offset: 0, 0
-  index: -1
-control/button_gold_ring_red_small
-  rotate: false
-  xy: 882, 203
-  size: 87, 87
-  orig: 87, 87
   offset: 0, 0
   index: -1
 control/button_gold_ring_small
   rotate: false
-  xy: 772, 11
+  xy: 182, 2
   size: 76, 76
   orig: 76, 76
   offset: 0, 0
   index: -1
-control/button_green
-  rotate: false
-  xy: 300, 6
-  size: 149, 47
-  split: 9, 13, 10, 13
-  pad: 6, 9, 7, 10
-  orig: 149, 47
-  offset: 0, 0
-  index: -1
 control/button_green_pressed_small
   rotate: false
-  xy: 451, 7
+  xy: 104, 80
   size: 110, 46
   split: 22, 22, 22, 23
   pad: 9, 8, 5, 8
@@ -94,58 +36,19 @@ control/button_green_pressed_small
   index: -1
 control/button_green_small
   rotate: false
-  xy: 563, 7
+  xy: 216, 80
   size: 110, 46
   split: 22, 21, 22, 23
   pad: 9, 8, 5, 8
   orig: 110, 46
   offset: 0, 0
   index: -1
-control/button_yellow_down
-  rotate: false
-  xy: 2, 3
-  size: 147, 50
-  split: 9, 11, 8, 12
-  pad: 8, 11, 6, 11
-  orig: 147, 50
-  offset: 0, 0
-  index: -1
-control/button_yellow_normal
-  rotate: false
-  xy: 151, 3
-  size: 147, 50
-  split: 8, 11, 8, 13
-  pad: 7, 11, 7, 11
-  orig: 147, 50
-  offset: 0, 0
-  index: -1
 control/dialog_dark_bg
   rotate: false
-  xy: 683, 2
+  xy: 260, 4
   size: 82, 74
   split: 37, 37, 31, 42
   pad: 23, 24, 15, 25
   orig: 82, 74
-  offset: 0, 0
-  index: -1
-control/dialog_separator
-  rotate: false
-  xy: 2, 55
-  size: 648, 9
-  orig: 648, 9
-  offset: 0, 0
-  index: -1
-control/shadow_bg
-  rotate: false
-  xy: 795, 270
-  size: 85, 109
-  orig: 85, 109
-  offset: 0, 0
-  index: -1
-dialog_bg
-  rotate: false
-  xy: 2, 66
-  size: 679, 425
-  orig: 679, 425
   offset: 0, 0
   index: -1

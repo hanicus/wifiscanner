@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -29,6 +30,7 @@ public class WifiScanner extends BaseComponent {
     private Map<String, Double> avgRSSIByBSSID = new HashMap<>();
 
     // View
+    private Table mainTable;
     private Table positionTable;
     private TextField xPositionTextField;
     private TextField yPositionTextField;
@@ -53,25 +55,30 @@ public class WifiScanner extends BaseComponent {
                 Gdx.app.log("WifiScanner", "startScanButton clicked");
             }
         });
+        startScanButton.getLabel().setFontScale(0.5f);
 
-        positionTable = addActorAndCenter(new Table(assets.getSkin()));
-        positionTable.setWidth(MainStage.STAGE_WIDTH);
-        positionTable.add("X Position: ").padLeft(20);
+        positionTable = new Table(assets.getSkin());
+        positionTable.add("X : ");
         positionTable.add(xPositionTextField);
-        positionTable.add("Y Position: ").padLeft(20);
+        positionTable.add("Y : ");
         positionTable.add(yPositionTextField);
-        positionTable.add(startScanButton).expandX();
+        positionTable.add(startScanButton).padLeft(20);
         positionTable.top().left();
-        positionTable.moveBy(-MainStage.STAGE_WIDTH / 2, MainStage.STAGE_HEIGHT / 2);
 
         scanResultTitle = new Label("", assets.getSkin());
 
-        scanResultsTable = addActorAndCenter(new Table(assets.getSkin()));
-        scanResultsTable.setWidth(MainStage.STAGE_WIDTH);
-        scanResultsTable.columnDefaults(0).padLeft(20);
+        scanResultsTable = new Table(assets.getSkin());
         scanResultsTable.top().left();
-        scanResultsTable.moveBy(-MainStage.STAGE_WIDTH / 2, MainStage.STAGE_HEIGHT / 2 - 100);
-    }
+
+        mainTable = addActorAndCenter(new Table());
+        mainTable.pad(20);
+        mainTable.columnDefaults(0).expandX();
+        mainTable.add(positionTable);
+        mainTable.row();
+        mainTable.add(scanResultsTable).padTop(20);
+        mainTable.top().left();
+        updateTables(MainStage.STAGE_WIDTH, MainStage.STAGE_HEIGHT);
+}
 
     @Override
     public void act(float delta) {
@@ -121,7 +128,24 @@ public class WifiScanner extends BaseComponent {
         }
     }
 
+    @Override
+    public void draw(Batch batch, float parentAlpha) {
+        super.draw(batch, parentAlpha);
+
+        float stageWidth = getStage().getViewport().getWorldWidth();
+        float stageHeight = getStage().getViewport().getWorldHeight();
+        updateTables(stageWidth, stageHeight);
+    }
+
     private void updateScanResultTitle(int scanCount) {
-        scanResultTitle.setText("Average Wifi Levels on Count #" + scanCount + "/" + TOTAL_SCAN_COUNT);
+        scanResultTitle.setText("Average Wifi Levels on Count #" + scanCount + "/"
+                + TOTAL_SCAN_COUNT);
+    }
+
+    private void updateTables(float stageWidth, float stageHeight) {
+        mainTable.setX(-stageWidth / 2);
+        mainTable.setY(stageHeight / 2);
+        mainTable.setWidth(stageWidth);
+        mainTable.columnDefaults(0).width(stageWidth);
     }
 }

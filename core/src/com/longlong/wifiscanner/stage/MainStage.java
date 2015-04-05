@@ -5,8 +5,8 @@ import com.longlong.wifiscanner.component.WifiScanner;
 import com.longlong.wifiscanner.util.Assets;
 
 public class MainStage extends BaseStage {
-    public final static int STAGE_WIDTH = 640;
-    public final static int STAGE_HEIGHT = 1138;
+    public final static int STAGE_WIDTH = 800;
+    public final static int STAGE_HEIGHT = 480;
 
     public MainStage(Assets assets) {
         super(MainStage.class.getSimpleName(), assets, new ExtendViewport(

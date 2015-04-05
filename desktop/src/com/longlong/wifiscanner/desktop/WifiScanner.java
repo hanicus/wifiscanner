@@ -11,8 +11,8 @@ public class WifiScanner implements WifiScannerAdapter {
     @Override
     public List<ScanResult> getScanResults() {
         List<ScanResult> scanResults = new LinkedList<>();
-        scanResults.add(new ScanResult("BSSID_1", "SSID_1", -30));
-        scanResults.add(new ScanResult("BSSID_2", "SSID_2", 30));
+        scanResults.add(new ScanResult("01-23-45-67-89-ab", "SSID_1", -30));
+        scanResults.add(new ScanResult("01-23-45-67-89-cd", "SSID_2asdgaw", 30));
         return scanResults;
     }
 

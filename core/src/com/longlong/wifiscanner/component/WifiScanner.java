@@ -2,6 +2,7 @@ package com.longlong.wifiscanner.component;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -28,13 +29,13 @@ public class WifiScanner extends BaseComponent {
     private float elapseTime = 0;
     private int scanCount = 0;
     private Map<String, Double> avgRSSIByBSSID = new HashMap<>();
+    private Map<String, String> ssidByBSSID = new HashMap<>();
 
     // View
     private Table mainTable;
     private Table positionTable;
     private TextField xPositionTextField;
     private TextField yPositionTextField;
-    private TextButton startScanButton;
     private Table scanResultsTable;
     private Label scanResultTitle;
     private Map<String, Label> scanResults = new HashMap<>();
@@ -44,10 +45,10 @@ public class WifiScanner extends BaseComponent {
         dao = assets.getDAO();
         assets.getSkin().getFont("Trebucket").setScale(0.3f);
 
-        xPositionTextField = new TextField("", assets.getSkin());
-        yPositionTextField = new TextField("", assets.getSkin());
+        xPositionTextField = new TextField("0", assets.getSkin());
+        yPositionTextField = new TextField("0", assets.getSkin());
 
-        startScanButton = new TextButton("Start", assets.getSkin(), "green");
+        TextButton startScanButton = new TextButton("Start", assets.getSkin(), "green");
         startScanButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -78,7 +79,7 @@ public class WifiScanner extends BaseComponent {
         mainTable.add(scanResultsTable).padTop(20);
         mainTable.top().left();
         updateTables(MainStage.STAGE_WIDTH, MainStage.STAGE_HEIGHT);
-}
+    }
 
     @Override
     public void act(float delta) {
@@ -88,15 +89,14 @@ public class WifiScanner extends BaseComponent {
         }
         elapseTime += delta;
         if (elapseTime > SCAN_INTERVAL_SECONDS) {
-            Gdx.app.log("WifiScanner", "Start Scanning WIFI!");
             elapseTime = 0;
             scanCount++;
             if (scanCount > TOTAL_SCAN_COUNT) {
+                writeResultsToFile();
                 startScanning = false;
                 scanCount = 0;
                 avgRSSIByBSSID.clear();
                 scanResults.clear();
-                // write to DAO
                 AlertDialog scanFinishDialog = addActorAndCenter(new AlertDialog(assets));
                 scanFinishDialog.setTitle("Complete");
                 scanFinishDialog.setContent("Wifi Scan Finished");
@@ -124,6 +124,10 @@ public class WifiScanner extends BaseComponent {
                     avgRSSIByBSSID.put(scanResult.BSSID, avgRSSI);
                     scanResults.get(scanResult.BSSID).setText(avgRSSI + " dBm");
                 }
+                if (!ssidByBSSID.containsKey(scanResult.BSSID)
+                        || !ssidByBSSID.get(scanResult.BSSID).equals(scanResult.SSID)) {
+                    ssidByBSSID.put(scanResult.BSSID, scanResult.SSID);
+                }
             }
         }
     }
@@ -147,5 +151,16 @@ public class WifiScanner extends BaseComponent {
         mainTable.setY(stageHeight / 2);
         mainTable.setWidth(stageWidth);
         mainTable.columnDefaults(0).width(stageWidth);
+    }
+
+    private void writeResultsToFile() {
+        String x = xPositionTextField.getText();
+        String y = yPositionTextField.getText();
+        for (Entry<String, Double> scanResult : avgRSSIByBSSID.entrySet()) {
+            String BSSID = scanResult.getKey();
+            dao.put(
+                "X=" + x + ",Y=" + y + ",BSSID=" + BSSID,
+                "SSID=" + ssidByBSSID.get(BSSID) + ",RSSI=" + scanResult.getValue());
+        }
     }
 }

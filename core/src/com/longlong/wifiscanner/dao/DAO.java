@@ -7,7 +7,7 @@ public class DAO {
     private final Preferences preferences;
 
     public DAO() {
-        preferences = Gdx.app.getPreferences("WiFi Scanner");
+        preferences = Gdx.app.getPreferences("WiFiScanner");
     }
 
     public void put(String key, String value) {

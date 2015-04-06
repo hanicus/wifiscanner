@@ -43,6 +43,14 @@ control/button_green_small
   orig: 110, 46
   offset: 0, 0
   index: -1
+control/cursor
+  rotate: false
+  xy: 2, 2
+  size: 3, 3
+  split: 1, 1, 1, 1
+  orig: 3, 3
+  offset: 0, 0
+  index: -1
 control/dialog_dark_bg
   rotate: false
   xy: 260, 4
@@ -50,5 +58,28 @@ control/dialog_dark_bg
   split: 37, 37, 31, 42
   pad: 23, 24, 15, 25
   orig: 82, 74
+  offset: 0, 0
+  index: -1
+control/label_bg_transparent
+  rotate: false
+  xy: 2, 7
+  size: 21, 17
+  split: 8, 9, 7, 7
+  orig: 21, 17
+  offset: 0, 0
+  index: -1
+control/selection
+  rotate: false
+  xy: 344, 125
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
+control/textfield
+  rotate: false
+  xy: 328, 112
+  size: 14, 14
+  split: 3, 3, 3, 3
+  orig: 14, 14
   offset: 0, 0
   index: -1

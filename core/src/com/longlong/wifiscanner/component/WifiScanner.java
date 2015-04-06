@@ -23,7 +23,7 @@ import com.longlong.wifiscanner.util.Assets;
 
 public class WifiScanner extends BaseComponent {
 
-    private static final Vector2 BUTTON_SIZE = new Vector2(200, 100);
+    private static final Vector2 BUTTON_SIZE = new Vector2(200, 120);
 
     // Model
     private final DAO dao;
@@ -97,8 +97,9 @@ public class WifiScanner extends BaseComponent {
         });
 
         configTable = new Table(assets.getSkin());
-        configTable.columnDefaults(1).width(100);
-        configTable.columnDefaults(3).width(100);
+        configTable.columnDefaults(1).width(75);
+        configTable.columnDefaults(2).padLeft(30);
+        configTable.columnDefaults(3).width(75);
         configTable.add("Scan Interval(s) : ");
         configTable.add(scanInternalTextField);
         configTable.add("X : ");
@@ -109,7 +110,6 @@ public class WifiScanner extends BaseComponent {
         configTable.add("Y : ");
         configTable.add(yPositionTextField);
         configTable.top().left();
-        configTable.debug();
 
         buttonsTable = addActorAndCenter(new Table());
         buttonsTable.pad(20);

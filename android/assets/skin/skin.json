@@ -35,6 +35,6 @@
         alert_dialog_content: { font: Trebucket, background: control/dialog_dark_bg }
     }
     com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
-        default: { font: Trebucket, fontColor: white }
+        default: { font: Trebucket, fontColor: white, background: control/textfield, cursor: control/cursor, selection: control/selection }
     }
 }

@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.longlong.wifiscanner.dao.DAO;
 import com.longlong.wifiscanner.dialog.AlertDialog;
 import com.longlong.wifiscanner.model.ScanResult;
+import com.longlong.wifiscanner.sound.SoundEffectEnum;
 import com.longlong.wifiscanner.stage.MainStage;
 import com.longlong.wifiscanner.util.Assets;
 
@@ -117,6 +118,7 @@ public class WifiScanner extends BaseComponent {
         if (scanCount >= totalScanCount) {
             writeResultsToFile();
             reset();
+            assets.getSoundManager().playSound(SoundEffectEnum.COMPLETE);
             showAlertDialog("Complete", "Wifi Scan Finished");
             return;
         }

@@ -20,9 +20,6 @@ import com.longlong.wifiscanner.util.Assets;
 
 public class WifiScanner extends BaseComponent {
 
-    private static final int SCAN_INTERVAL_SECONDS = 1;
-    private static final int TOTAL_SCAN_COUNT = 10;
-
     // Model
     private final DAO dao;
     private boolean startScanning = false;
@@ -34,6 +31,10 @@ public class WifiScanner extends BaseComponent {
     // View
     private Table mainTable;
     private Table positionTable;
+    private TextField scanInternalTextField;
+    private int scanIntervalSeconds = 1;
+    private TextField totalScanCountTextField;
+    private int totalScanCount = 60;
     private TextField xPositionTextField;
     private TextField yPositionTextField;
     private Table scanResultsTable;
@@ -45,6 +46,10 @@ public class WifiScanner extends BaseComponent {
         dao = assets.getDAO();
         assets.getSkin().getFont("Trebucket").setScale(0.3f);
 
+        scanInternalTextField = new TextField(
+            Integer.toString(scanIntervalSeconds),
+            assets.getSkin());
+        totalScanCountTextField = new TextField(Integer.toString(totalScanCount), assets.getSkin());
         xPositionTextField = new TextField("0", assets.getSkin());
         yPositionTextField = new TextField("0", assets.getSkin());
 
@@ -52,15 +57,28 @@ public class WifiScanner extends BaseComponent {
         startScanButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                try {
+                    scanIntervalSeconds = Integer.valueOf(scanInternalTextField.getText());
+                    totalScanCount = Integer.valueOf(totalScanCountTextField.getText());
+                } catch (NumberFormatException e) {
+                    showAlertDialog(
+                        "Error",
+                        "Scan Interval and Scan Count must be Integer.");
+                    return;
+                }
                 startScanning = true;
-                Gdx.app.log("WifiScanner", "startScanButton clicked");
             }
         });
         startScanButton.getLabel().setFontScale(0.5f);
 
         positionTable = new Table(assets.getSkin());
+        positionTable.add("Scan Interval(s) : ");
+        positionTable.add(scanInternalTextField);
         positionTable.add("X : ");
         positionTable.add(xPositionTextField);
+        positionTable.row();
+        positionTable.add("Scan Count : ");
+        positionTable.add(totalScanCountTextField);
         positionTable.add("Y : ");
         positionTable.add(yPositionTextField);
         positionTable.add(startScanButton).padLeft(20);
@@ -70,6 +88,7 @@ public class WifiScanner extends BaseComponent {
 
         scanResultsTable = new Table(assets.getSkin());
         scanResultsTable.top().left();
+        scanResultsTable.debug();
 
         mainTable = addActorAndCenter(new Table());
         mainTable.pad(20);
@@ -87,22 +106,19 @@ public class WifiScanner extends BaseComponent {
         if (!startScanning) {
             return;
         }
+        if (scanCount >= totalScanCount) {
+            writeResultsToFile();
+            startScanning = false;
+            scanCount = 0;
+            avgRSSIByBSSID.clear();
+            scanResults.clear();
+            showAlertDialog("Complete", "Wifi Scan Finished");
+            return;
+        }
         elapseTime += delta;
-        if (elapseTime > SCAN_INTERVAL_SECONDS) {
+        if (elapseTime > scanIntervalSeconds) {
             elapseTime = 0;
             scanCount++;
-            if (scanCount > TOTAL_SCAN_COUNT) {
-                writeResultsToFile();
-                startScanning = false;
-                scanCount = 0;
-                avgRSSIByBSSID.clear();
-                scanResults.clear();
-                AlertDialog scanFinishDialog = addActorAndCenter(new AlertDialog(assets));
-                scanFinishDialog.setTitle("Complete");
-                scanFinishDialog.setContent("Wifi Scan Finished");
-                scanFinishDialog.show();
-                return;
-            }
             updateScanResultTitle(scanCount);
             for (ScanResult scanResult : assets.getWifiScannerAdapter().getScanResults()) {
                 Gdx.app.log("WifiScanner", scanResult.toString());
@@ -143,7 +159,7 @@ public class WifiScanner extends BaseComponent {
 
     private void updateScanResultTitle(int scanCount) {
         scanResultTitle.setText("Average Wifi Levels on Count #" + scanCount + "/"
-                + TOTAL_SCAN_COUNT);
+                + totalScanCount);
     }
 
     private void updateTables(float stageWidth, float stageHeight) {
@@ -158,9 +174,15 @@ public class WifiScanner extends BaseComponent {
         String y = yPositionTextField.getText();
         for (Entry<String, Double> scanResult : avgRSSIByBSSID.entrySet()) {
             String BSSID = scanResult.getKey();
-            dao.put(
-                "X=" + x + ",Y=" + y + ",BSSID=" + BSSID,
-                "SSID=" + ssidByBSSID.get(BSSID) + ",RSSI=" + scanResult.getValue());
+            dao.put("X=" + x + ",Y=" + y + ",BSSID=" + BSSID, "SSID=" + ssidByBSSID.get(BSSID)
+                    + ",RSSI=" + scanResult.getValue());
         }
+    }
+
+    private void showAlertDialog(String title, String content) {
+        AlertDialog scanFinishDialog = addActorAndCenter(new AlertDialog(assets));
+        scanFinishDialog.setTitle(title);
+        scanFinishDialog.setContent(content);
+        scanFinishDialog.show();
     }
 }

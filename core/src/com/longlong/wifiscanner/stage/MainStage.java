@@ -15,6 +15,5 @@ public class MainStage extends BaseStage {
             0,
             0));
         addActorAndCenter(new WifiScanner(assets));
-        setDebugAll(true);
     }
 }

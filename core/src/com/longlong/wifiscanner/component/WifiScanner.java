@@ -30,7 +30,7 @@ public class WifiScanner extends BaseComponent {
 
     // View
     private Table mainTable;
-    private Table positionTable;
+    private Table configTable;
     private TextField scanInternalTextField;
     private int scanIntervalSeconds = 1;
     private TextField totalScanCountTextField;
@@ -61,28 +61,36 @@ public class WifiScanner extends BaseComponent {
                     scanIntervalSeconds = Integer.valueOf(scanInternalTextField.getText());
                     totalScanCount = Integer.valueOf(totalScanCountTextField.getText());
                 } catch (NumberFormatException e) {
-                    showAlertDialog(
-                        "Error",
-                        "Scan Interval and Scan Count must be Integer.");
+                    showAlertDialog("Error", "Scan Interval and Scan Count must be Integer.");
                     return;
                 }
                 startScanning = true;
             }
         });
         startScanButton.getLabel().setFontScale(0.5f);
+        TextButton cancelScanButton = new TextButton("Cancel", assets.getSkin(), "green");
+        cancelScanButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                reset();
+                scanResultsTable.clearChildren();
+            }
+        });
+        cancelScanButton.getLabel().setFontScale(0.5f);
 
-        positionTable = new Table(assets.getSkin());
-        positionTable.add("Scan Interval(s) : ");
-        positionTable.add(scanInternalTextField);
-        positionTable.add("X : ");
-        positionTable.add(xPositionTextField);
-        positionTable.row();
-        positionTable.add("Scan Count : ");
-        positionTable.add(totalScanCountTextField);
-        positionTable.add("Y : ");
-        positionTable.add(yPositionTextField);
-        positionTable.add(startScanButton).padLeft(20);
-        positionTable.top().left();
+        configTable = new Table(assets.getSkin());
+        configTable.add("Scan Interval(s) : ");
+        configTable.add(scanInternalTextField);
+        configTable.add("X : ");
+        configTable.add(xPositionTextField);
+        configTable.add(startScanButton).padLeft(20);
+        configTable.row();
+        configTable.add("Scan Count : ");
+        configTable.add(totalScanCountTextField);
+        configTable.add("Y : ");
+        configTable.add(yPositionTextField);
+        configTable.add(cancelScanButton).padLeft(20);
+        configTable.top().left();
 
         scanResultTitle = new Label("", assets.getSkin());
 
@@ -93,7 +101,7 @@ public class WifiScanner extends BaseComponent {
         mainTable = addActorAndCenter(new Table());
         mainTable.pad(20);
         mainTable.columnDefaults(0).expandX();
-        mainTable.add(positionTable);
+        mainTable.add(configTable);
         mainTable.row();
         mainTable.add(scanResultsTable).padTop(20);
         mainTable.top().left();
@@ -108,10 +116,7 @@ public class WifiScanner extends BaseComponent {
         }
         if (scanCount >= totalScanCount) {
             writeResultsToFile();
-            startScanning = false;
-            scanCount = 0;
-            avgRSSIByBSSID.clear();
-            scanResults.clear();
+            reset();
             showAlertDialog("Complete", "Wifi Scan Finished");
             return;
         }
@@ -157,9 +162,16 @@ public class WifiScanner extends BaseComponent {
         updateTables(stageWidth, stageHeight);
     }
 
+    private void reset() {
+        startScanning = false;
+        scanCount = 0;
+        elapseTime = 0;
+        avgRSSIByBSSID.clear();
+        scanResults.clear();
+    }
+
     private void updateScanResultTitle(int scanCount) {
-        scanResultTitle.setText("Average Wifi Levels on Count #" + scanCount + "/"
-                + totalScanCount);
+        scanResultTitle.setText("Average Wifi Levels on Count #" + scanCount + "/" + totalScanCount);
     }
 
     private void updateTables(float stageWidth, float stageHeight) {

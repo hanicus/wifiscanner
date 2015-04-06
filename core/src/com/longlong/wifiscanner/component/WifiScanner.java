@@ -6,11 +6,13 @@ import java.util.Map.Entry;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.longlong.wifiscanner.dao.DAO;
 import com.longlong.wifiscanner.dialog.AlertDialog;
@@ -20,6 +22,8 @@ import com.longlong.wifiscanner.stage.MainStage;
 import com.longlong.wifiscanner.util.Assets;
 
 public class WifiScanner extends BaseComponent {
+
+    private static final Vector2 BUTTON_SIZE = new Vector2(200, 100);
 
     // Model
     private final DAO dao;
@@ -31,13 +35,19 @@ public class WifiScanner extends BaseComponent {
 
     // View
     private Table mainTable;
+
     private Table configTable;
     private TextField scanInternalTextField;
     private int scanIntervalSeconds = 1;
     private TextField totalScanCountTextField;
     private int totalScanCount = 60;
     private TextField xPositionTextField;
+    private String xPosition = "0";
     private TextField yPositionTextField;
+    private String yPosition = "0";
+
+    private Table buttonsTable;
+
     private Table scanResultsTable;
     private Label scanResultTitle;
     private Map<String, Label> scanResults = new HashMap<>();
@@ -51,47 +61,60 @@ public class WifiScanner extends BaseComponent {
             Integer.toString(scanIntervalSeconds),
             assets.getSkin());
         totalScanCountTextField = new TextField(Integer.toString(totalScanCount), assets.getSkin());
-        xPositionTextField = new TextField("0", assets.getSkin());
-        yPositionTextField = new TextField("0", assets.getSkin());
+        xPositionTextField = new TextField(xPosition, assets.getSkin());
+        yPositionTextField = new TextField(yPosition, assets.getSkin());
 
-        TextButton startScanButton = new TextButton("Start", assets.getSkin(), "green");
+        final TextButton startScanButton = new TextButton("Start", assets.getSkin(), "green");
+        startScanButton.getLabel().setFontScale(0.5f);
+        final TextButton cancelScanButton = new TextButton("Cancel", assets.getSkin(), "green");
+        cancelScanButton.getLabel().setFontScale(0.5f);
+
         startScanButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 try {
                     scanIntervalSeconds = Integer.valueOf(scanInternalTextField.getText());
                     totalScanCount = Integer.valueOf(totalScanCountTextField.getText());
+                    xPosition = xPositionTextField.getText();
+                    yPosition = yPositionTextField.getText();
                 } catch (NumberFormatException e) {
                     showAlertDialog("Error", "Scan Interval and Scan Count must be Integer.");
                     return;
                 }
                 startScanning = true;
+                buttonsTable.clearChildren();
+                buttonsTable.add(cancelScanButton).size(BUTTON_SIZE.x, BUTTON_SIZE.y);
             }
         });
-        startScanButton.getLabel().setFontScale(0.5f);
-        TextButton cancelScanButton = new TextButton("Cancel", assets.getSkin(), "green");
         cancelScanButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 reset();
                 scanResultsTable.clearChildren();
+                buttonsTable.clearChildren();
+                buttonsTable.add(startScanButton).size(BUTTON_SIZE.x, BUTTON_SIZE.y);
             }
         });
-        cancelScanButton.getLabel().setFontScale(0.5f);
 
         configTable = new Table(assets.getSkin());
+        configTable.columnDefaults(1).width(100);
+        configTable.columnDefaults(3).width(100);
         configTable.add("Scan Interval(s) : ");
         configTable.add(scanInternalTextField);
         configTable.add("X : ");
         configTable.add(xPositionTextField);
-        configTable.add(startScanButton).padLeft(20);
         configTable.row();
         configTable.add("Scan Count : ");
         configTable.add(totalScanCountTextField);
         configTable.add("Y : ");
         configTable.add(yPositionTextField);
-        configTable.add(cancelScanButton).padLeft(20);
         configTable.top().left();
+        configTable.debug();
+
+        buttonsTable = addActorAndCenter(new Table());
+        buttonsTable.pad(20);
+        buttonsTable.add(startScanButton).size(BUTTON_SIZE.x, BUTTON_SIZE.y);
+        buttonsTable.top().right();
 
         scanResultTitle = new Label("", assets.getSkin());
 
@@ -102,7 +125,7 @@ public class WifiScanner extends BaseComponent {
         mainTable = addActorAndCenter(new Table());
         mainTable.pad(20);
         mainTable.columnDefaults(0).expandX();
-        mainTable.add(configTable);
+        mainTable.add(configTable).align(Align.left);
         mainTable.row();
         mainTable.add(scanResultsTable).padTop(20);
         mainTable.top().left();
@@ -181,15 +204,17 @@ public class WifiScanner extends BaseComponent {
         mainTable.setY(stageHeight / 2);
         mainTable.setWidth(stageWidth);
         mainTable.columnDefaults(0).width(stageWidth);
+        buttonsTable.setX(-stageWidth / 2);
+        buttonsTable.setY(stageHeight / 2);
+        buttonsTable.setWidth(stageWidth);
     }
 
     private void writeResultsToFile() {
-        String x = xPositionTextField.getText();
-        String y = yPositionTextField.getText();
         for (Entry<String, Double> scanResult : avgRSSIByBSSID.entrySet()) {
             String BSSID = scanResult.getKey();
-            dao.put("X=" + x + ",Y=" + y + ",BSSID=" + BSSID, "SSID=" + ssidByBSSID.get(BSSID)
-                    + ",RSSI=" + scanResult.getValue());
+            dao.put(
+                "X=" + xPosition + ",Y=" + yPosition + ",BSSID=" + BSSID,
+                "SSID=" + ssidByBSSID.get(BSSID) + ",RSSI=" + scanResult.getValue());
         }
     }
 

@@ -47,6 +47,8 @@ public class WifiScanner extends BaseComponent {
     private String yPosition = "0";
 
     private Table buttonsTable;
+    private TextButton startScanButton;
+    private TextButton cancelScanButton;
 
     private Table scanResultsTable;
     private Label scanResultTitle;
@@ -64,9 +66,9 @@ public class WifiScanner extends BaseComponent {
         xPositionTextField = new TextField(xPosition, assets.getSkin());
         yPositionTextField = new TextField(yPosition, assets.getSkin());
 
-        final TextButton startScanButton = new TextButton("Start", assets.getSkin(), "green");
+        startScanButton = new TextButton("Start", assets.getSkin(), "green");
         startScanButton.getLabel().setFontScale(0.5f);
-        final TextButton cancelScanButton = new TextButton("Cancel", assets.getSkin(), "green");
+        cancelScanButton = new TextButton("Cancel", assets.getSkin(), "green");
         cancelScanButton.getLabel().setFontScale(0.5f);
 
         startScanButton.addListener(new ClickListener() {
@@ -91,8 +93,6 @@ public class WifiScanner extends BaseComponent {
             public void clicked(InputEvent event, float x, float y) {
                 reset();
                 scanResultsTable.clearChildren();
-                buttonsTable.clearChildren();
-                buttonsTable.add(startScanButton).size(BUTTON_SIZE.x, BUTTON_SIZE.y);
             }
         });
 
@@ -119,6 +119,8 @@ public class WifiScanner extends BaseComponent {
         scanResultTitle = new Label("", assets.getSkin());
 
         scanResultsTable = new Table(assets.getSkin());
+        scanResultsTable.columnDefaults(1).padLeft(20).padRight(20).align(Align.left);
+        scanResultsTable.columnDefaults(2).align(Align.right);
         scanResultsTable.top().left();
         scanResultsTable.debug();
 
@@ -142,7 +144,10 @@ public class WifiScanner extends BaseComponent {
             writeResultsToFile();
             reset();
             assets.getSoundManager().playSound(SoundEffectEnum.COMPLETE);
-            showAlertDialog("Complete", "Wifi Scan Finished");
+            showAlertDialog(
+                "Complete",
+                "Wifi Scan Finished.\n\nAll results have been written to preference file \"WifiScanner\" with key:\nX="
+                        + xPosition + ",Y=" + yPosition + ",BSSID=$(BSSID)");
             return;
         }
         elapseTime += delta;
@@ -193,6 +198,8 @@ public class WifiScanner extends BaseComponent {
         elapseTime = 0;
         avgRSSIByBSSID.clear();
         scanResults.clear();
+        buttonsTable.clearChildren();
+        buttonsTable.add(startScanButton).size(BUTTON_SIZE.x, BUTTON_SIZE.y);
     }
 
     private void updateScanResultTitle(int scanCount) {
@@ -219,7 +226,14 @@ public class WifiScanner extends BaseComponent {
     }
 
     private void showAlertDialog(String title, String content) {
-        AlertDialog scanFinishDialog = addActorAndCenter(new AlertDialog(assets));
+        // TODO: Add table border and remove scanResultsTable debug mode
+        scanResultsTable.setDebug(false);
+        AlertDialog scanFinishDialog = addActorAndCenter(new AlertDialog(assets, new Runnable() {
+            @Override
+            public void run() {
+                scanResultsTable.debug();
+            }
+        }));
         scanFinishDialog.setTitle(title);
         scanFinishDialog.setContent(content);
         scanFinishDialog.show();

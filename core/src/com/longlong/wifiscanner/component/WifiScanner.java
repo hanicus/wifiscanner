@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -14,7 +15,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.longlong.wifiscanner.dao.DAO;
 import com.longlong.wifiscanner.dialog.AlertDialog;
 import com.longlong.wifiscanner.model.ScanResult;
 import com.longlong.wifiscanner.sound.SoundEffectEnum;
@@ -26,7 +26,7 @@ public class WifiScanner extends BaseComponent {
     private static final Vector2 BUTTON_SIZE = new Vector2(200, 120);
 
     // Model
-    private final DAO dao;
+    private final FileHandle fileHandle;
     private boolean startScanning = false;
     private float elapseTime = 0;
     private int scanCount = 0;
@@ -56,7 +56,16 @@ public class WifiScanner extends BaseComponent {
 
     public WifiScanner(Assets assets) {
         super(assets);
-        dao = assets.getDAO();
+        if (Gdx.files.isExternalStorageAvailable()) {
+            Gdx.app.log("WifiScanner", "external:" + Gdx.files.getExternalStoragePath());
+            fileHandle = Gdx.files.external("WiFiScanner");
+        } else if (Gdx.files.isLocalStorageAvailable()) {
+            Gdx.app.log("WifiScanner", "internal:" + Gdx.files.getLocalStoragePath());
+            fileHandle = Gdx.files.local("WiFiScanner");
+        } else {
+            Gdx.app.log("WifiScanner", "Storage not available.");
+            fileHandle = null;
+        }
         assets.getSkin().getFont("Trebucket").setScale(0.3f);
 
         scanInternalTextField = new TextField(
@@ -219,9 +228,10 @@ public class WifiScanner extends BaseComponent {
     private void writeResultsToFile() {
         for (Entry<String, Double> scanResult : avgRSSIByBSSID.entrySet()) {
             String BSSID = scanResult.getKey();
-            dao.put(
-                "X=" + xPosition + ",Y=" + yPosition + ",BSSID=" + BSSID,
-                "SSID=" + ssidByBSSID.get(BSSID) + ",RSSI=" + scanResult.getValue());
+            fileHandle.writeString(
+                "X=" + xPosition + ",Y=" + yPosition + ",BSSID=" + BSSID + ",SSID="
+                        + ssidByBSSID.get(BSSID) + ",RSSI=" + scanResult.getValue() + "\n",
+                true);
         }
     }
 

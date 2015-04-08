@@ -5,7 +5,6 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.longlong.wifiscanner.WifiScannerAdapter;
-import com.longlong.wifiscanner.dao.DAO;
 import com.longlong.wifiscanner.sound.SoundManager;
 
 public class Assets {
@@ -16,7 +15,6 @@ public class Assets {
     private Skin skin;
     private final SoundManager soundManager = new SoundManager();
     private final WifiScannerAdapter wifiScannerAdapter;
-    private final DAO dao = new DAO();
 
     public Assets(WifiScannerAdapter wifiScannerAdapter) {
         this.assetManager = new AssetManager();
@@ -45,9 +43,5 @@ public class Assets {
 
     public WifiScannerAdapter getWifiScannerAdapter() {
         return wifiScannerAdapter;
-    }
-
-    public DAO getDAO() {
-        return dao;
     }
 }

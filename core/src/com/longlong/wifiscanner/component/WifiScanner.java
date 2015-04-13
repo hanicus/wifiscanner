@@ -26,7 +26,8 @@ public class WifiScanner extends BaseComponent {
     private static final Vector2 BUTTON_SIZE = new Vector2(200, 120);
 
     // Model
-    private final FileHandle fileHandle;
+    private final FileHandle avgFileHandle;
+    private final FileHandle detailFileHandle;
     private boolean startScanning = false;
     private float elapseTime = 0;
     private int scanCount = 0;
@@ -58,13 +59,16 @@ public class WifiScanner extends BaseComponent {
         super(assets);
         if (Gdx.files.isExternalStorageAvailable()) {
             Gdx.app.log("WifiScanner", "external:" + Gdx.files.getExternalStoragePath());
-            fileHandle = Gdx.files.external("WiFiScanner");
+            avgFileHandle = Gdx.files.external("WiFiScanner/averageResults.txt");
+            detailFileHandle = Gdx.files.external("WiFiScanner/detailResults.txt");
         } else if (Gdx.files.isLocalStorageAvailable()) {
             Gdx.app.log("WifiScanner", "internal:" + Gdx.files.getLocalStoragePath());
-            fileHandle = Gdx.files.local("WiFiScanner");
+            avgFileHandle = Gdx.files.local("WiFiScanner/averageResults.txt");
+            detailFileHandle = Gdx.files.local("WiFiScanner/detailResults.txt");
         } else {
             Gdx.app.log("WifiScanner", "Storage not available.");
-            fileHandle = null;
+            avgFileHandle = null;
+            detailFileHandle = null;
         }
         assets.getSkin().getFont("Trebucket").setScale(0.3f);
 
@@ -150,7 +154,7 @@ public class WifiScanner extends BaseComponent {
             return;
         }
         if (scanCount >= totalScanCount) {
-            writeResultsToFile();
+            writeAvgResultsToFile();
             reset();
             assets.getSoundManager().playSound(SoundEffectEnum.COMPLETE);
             showAlertDialog(
@@ -188,6 +192,9 @@ public class WifiScanner extends BaseComponent {
                         || !ssidByBSSID.get(scanResult.BSSID).equals(scanResult.SSID)) {
                     ssidByBSSID.put(scanResult.BSSID, scanResult.SSID);
                 }
+                detailFileHandle.writeString("Count=" + scanCount + ",X=" + xPosition + ",Y="
+                        + yPosition + ",BSSID=" + scanResult.BSSID + ",SSID=" + scanResult.SSID
+                        + ",RSSI=" + scanResult.RSSI + "\n", true);
             }
         }
     }
@@ -225,10 +232,10 @@ public class WifiScanner extends BaseComponent {
         buttonsTable.setWidth(stageWidth);
     }
 
-    private void writeResultsToFile() {
+    private void writeAvgResultsToFile() {
         for (Entry<String, Double> scanResult : avgRSSIByBSSID.entrySet()) {
             String BSSID = scanResult.getKey();
-            fileHandle.writeString(
+            avgFileHandle.writeString(
                 "X=" + xPosition + ",Y=" + yPosition + ",BSSID=" + BSSID + ",SSID="
                         + ssidByBSSID.get(BSSID) + ",RSSI=" + scanResult.getValue() + "\n",
                 true);
